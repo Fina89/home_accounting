@@ -185,7 +185,7 @@ const Categories = {
 //Отчет (графики)
 const Graphs = {
     id: 'graphs',
-    title: 'Отчет',
+    title: 'Обзор',
     auth: true,
     render: function(classNames) {
         classNames = classNames || ""
@@ -293,6 +293,20 @@ const Accounts = {
             </div>
         </div>
         `
+        return html
+    }
+}
+
+const Operations = {
+    id: 'Operations',
+    title: 'Операции',
+    render: function(classNames) {
+        classNames = classNames || ""
+        const html = `
+    <p class="${classNames}">
+    Операции
+    </p>
+`
         return html
     }
 }
