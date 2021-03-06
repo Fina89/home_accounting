@@ -1,0 +1,236 @@
+.header {
+    color: #fff;
+    background-color: #808080;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.header-container {
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.auth-controls>a:hover {
+    -webkit-transform: scale(1.2);
+    -ms-transform: scale(1.2);
+    transform: scale(1.1);
+}
+
+.header-container>a {
+    font-size: 25px;
+    text-decoration: none;
+    font-weight: bold;
+    color: white;
+    font-family: 'Merriweather', serif;
+    transition: 0.5s linear;
+}
+
+.header-container>a:hover {
+    color: black;
+}
+
+.content-container {
+    display: flex;
+}
+
+.sidebar {
+    display: flex;
+    width: 15%;
+    flex-direction: column;
+    background-color: #a9a9a9d9;
+    min-height: calc(100vh - 50px);
+
+}
+
+.sidebar-item {
+    width: 100%;
+    padding: 5px;
+    font-size: 20px;
+    text-decoration: none;
+    font-weight: bold;
+    color: white;
+    transition: 0.5s linear;
+    font-family: 'Merriweather', serif;
+}
+
+.sidebar a:hover {
+    color: black;
+}
+
+.sidebar-item.active {
+    font-weight: bold;
+}
+
+.mask {
+    width: 100%;
+    background-image: url(../image/main.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    font-family: 'Merriweather', serif;
+    align-items: center;
+    color: white;
+    font-weight: bold;
+    min-height: calc(100vh - 50px);
+}
+
+.mask h1,
+.mask h2 {
+    background-color: #ffffff63;
+    color: black;
+    border-radius: 15px;
+    padding: 15px;
+}
+
+.content {
+    width: 85%;
+}
+
+.landing-page {
+    font-size: 30px;
+    background-color: #ffffff63;
+    color: black;
+    border-radius: 15px;
+    padding: 15px;
+}
+
+.ol {
+    font-size: 19px;
+    font-weight: bold;
+    background-color: #ffffff63;
+    border-radius: 15px;
+    color: black;
+    padding: 15px;
+}
+
+
+
+a.logo {
+    color: inherit;
+    text-decoration: none;
+    border-radius: 15px;
+    border-color: white;
+}
+
+.auth-controls {
+    width: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.auth-controls div,
+.auth-controls a {
+    margin-left: 2px;
+    margin-right: 2px;
+}
+
+.user-info {
+    display: flex;
+    /* height: fit-content; */
+}
+
+.form-signin {
+    width: 100%;
+    max-width: 330px;
+    padding: 15px;
+    margin: auto;
+    margin-top: 250px;
+}
+
+.form-signin .checkbox {
+    font-weight: 400;
+}
+
+.form-signin .form-control {
+    position: relative;
+    box-sizing: border-box;
+    height: auto;
+    padding: 10px;
+    font-size: 16px;
+}
+
+.form-signin .form-control:focus {
+    z-index: 2;
+}
+
+.form-signin input[type="email"] {
+    margin-bottom: -1px;
+}
+
+.form-signin input[type="password"] {
+    margin-bottom: -1px;
+}
+
+.form-signin button {
+    margin-top: 10px;
+}
+
+.custom-modal-fade {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5)
+}
+
+.custom-modal-fade>.custom-modal-content {
+    width: 400px;
+    height: 300px;
+    background-color: #fff;
+    border-radius: 5px;
+}
+
+.loading-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 100;
+    background-color: rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.spinner {
+    font-size: 300px;
+    color: #fff;
+    animation-name: spin;
+    animation-duration: 1500ms;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.loading-text {
+    font-size: 80px;
+    color: #fff;
+}
+
+.hidden {
+    display: none !important;
+}

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Home accounting</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" integrity="sha512-HK5fgLBL+xu6dm/Ii3z4xhlSUyZgTT9tuc/hSrtw6uzJOvgRr2a9jyxxT1ely+B+xFAmJKVSTbpM/CuL7qxO8w==" crossorigin="anonymous" />
+    <link href="assets/css/style.css" rel="stylesheet">
+</head>
+
+<body>
+    <div id="root">
+
+    </div>
+    <!-- Insert these scripts at the bottom of the HTML, but before you use any Firebase services -->
+
+    <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/8.2.9/firebase-app.js"></script>
+
+    <!-- Add Firebase products that you want to use -->
+    <!-- методы для работы с авторизацией -->
+    <script src="https://www.gstatic.com/firebasejs/8.2.9/firebase-auth.js"></script>
+    <!-- методы для работы с базой данных -->
+    <script src="https://www.gstatic.com/firebasejs/8.2.9/firebase-database.js"></script>
+
+    <!-- подключение файрбэйза -->
+    <script src="assets/js/init_firebase.js"></script>
+
+    <!-- дополнительные обработчики(ошибки) -->
+    <script src="assets/js/helpers.js"></script>
+    <!-- <script src="assets/js/auth_firebase.js"></script> -->
+
+    <!-- основные части страницы -->
+    <script src="assets/js/components/components.js"></script>
+    <!-- содержимое контента, разделы -->
+    <script src="assets/js/components/pages.js"></script>
+    <!-- содержимое формы -->
+    <script src="assets/js/components/forms.js"></script>
+    <!-- SPA -->
+    <script src="assets/js/index.js"></script>
+
+
+</body>
+
+</html>
