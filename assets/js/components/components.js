@@ -19,29 +19,29 @@ const Header = {
     }
 }
 const Content = {
-        id: 'content',
-        render: function(classNames) {
-            classNames = classNames || ""
-            const html = `
-            <div id="${this.id}"  class="content container-fluid ${classNames}">
+    id: 'content',
+    render: function(classNames) {
+        classNames = classNames || ""
+        const html = `
+            <div id="${this.id}"  class="content container-fluid p-0 ${classNames}">
             </div>
         `;
-            return html;
-        }
+        return html;
     }
-    // боковое меню
+}
+// боковое меню
 const SideBar = {
-        id: 'sidebar',
-        render: function(classNames) {
-            classNames = classNames || ""
-            const html = `
+    id: 'sidebar',
+    render: function(classNames) {
+        classNames = classNames || ""
+        const html = `
             <div id="${this.id}"  class="sidebar ${classNames}">
             </div>
         `;
-            return html;
-        }
+        return html;
     }
-    // один пункт меню из сайд бар
+}
+// один пункт меню из сайд бар
 const SideBarItem = {
     id: 'sidebar',
     render: function(content, link, classNames) {
@@ -71,17 +71,17 @@ const Container = {
 }
 
 const Footer = {
-        id: 'footer',
-        render: function(classNames) {
-            classNames = classNames || ""
-            const html = `
+    id: 'footer',
+    render: function(classNames) {
+        classNames = classNames || ""
+        const html = `
             <div id="${this.id}"  class="${classNames}">
             </div>
         `;
-            return html;
-        }
+        return html;
     }
-    // класс, описывающий модалку
+}
+// класс, описывающий модалку
 function Modal(component) {
     this.id = component.id + '-modal';
     this.component = component;
