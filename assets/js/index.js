@@ -50,10 +50,8 @@ const SPA = function() {
         }
         this.renderContent = function(routeName, user) {
             routeName = routeName || "landing"; //отобразить определенную страницу? либо страницу по умолчанию(лэндинг)
-            console.log(routeName)
             let route = moduleRoutes[routeName] || pages.error404;
             route = (!user && route.auth) ? pages.error404 : route;
-            console.log(route)
             switch (route.id) {
                 case 'categories': //если ключом является Категория, то выполняется код
                     moduleContent.innerHTML = route.render(`${route.id}-page`); //отрисовываются категории конкретного юзера

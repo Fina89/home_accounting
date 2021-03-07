@@ -162,10 +162,10 @@ const AddAccountForm = {
                 const ref = firebase.database().ref('user-' + this.uid).child('accounts')
                 const data = {
                     title: title.value,
-                    color: color.value
+                    color: color.value,
+                    amount: 0
                 }
                 ref.push(data).then(() => {
-                    window.dispatchEvent(dbEvent)
                     window.dispatchEvent(formEvent)
                 })
             })

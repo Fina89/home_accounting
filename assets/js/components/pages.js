@@ -108,26 +108,29 @@ const Graphs = {
     }
 }
 const AccountCard = {
-    init: function(id, account, user) {
+    init: function(id, account, accountsRef, operationsRef) {
         const card = document.querySelector(`[data-id="${id}"]`)
         const addMoneyBtn = card.querySelector('.addMoney-btn')
+        const currentAccountRef = accountsRef.child(id)
         addMoneyBtn.addEventListener('click', () => {
             const money = card.querySelector('.money')
             const amount = Number(money.value)
             if (isNaN(amount) || (amount <= 0)) {
                 return
             }
-            const operations = firebase.database().ref(`user-${user.uid}`).child('operations')
             const data = {
                 account: {
                     id: id,
                     title: account.title
                 },
-                amount: amount
+                type: 'deposit',
+                amount: amount,
+                ts: new Date().getTime()
             }
-            operations.push(data).then(() => {
-                window.dispatchEvent(dbEvent)
-                window.dispatchEvent(formEvent)
+            operationsRef.push(data).then(() => {
+                currentAccountRef.update({
+                    amount: account.amount + amount,
+                })
             })
         })
     },
@@ -137,7 +140,7 @@ const AccountCard = {
             <div class="card" style="background-color: ${account.color}">
                 <div class="card-body">
                     <h5 class="card-title">${account.title}</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">Сумма</h6>
+                    <h6 class="card-subtitle mb-2 text-muted">Сумма: ${account.amount}</h6>
                 </div>
                 <div class="card-body">
                 <p class="card-text">Добавить сумму</p>
@@ -154,28 +157,28 @@ const Accounts = {
     id: 'accounts',
     title: 'Счета',
     auth: true,
+    accountsRef: null,
+    operationsRef: null,
     getAccounts: function(user) {
-        const accounts = firebase.database().ref('user-' + user.uid).child('accounts');
-        accounts.get().then((response) => {
-            this.renderAccounts(response.val(), user)
-        })
+        this.accountsRef = firebase.database().ref('user-' + user.uid).child('accounts');
+        this.operationsRef = firebase.database().ref(`user-${user.uid}`).child('operations');
+        this.accountsRef.off('value');
+        this.accountsRef.on('value', (snapshot) => {
+            this.renderAccounts(snapshot.val(), user)
+        });
     },
     renderAccounts: function(data, user) {
         const accountsCards = document.querySelector(`#${this.id}-cards`)
         let accountsCardsHTML = ''
+        accountsCards.innerHTML = accountsCardsHTML;
         for (let cat in data) {
             accountsCardsHTML += AccountCard.render(cat, data[cat])
 
         }
         accountsCards.innerHTML = accountsCardsHTML
         for (let cat in data) {
-            AccountCard.init(cat, data[cat], user)
+            AccountCard.init(cat, data[cat], this.accountsRef, this.operationsRef)
         }
-
-        // const addMoneyBtn = accountsCards.querySelectorAll('.addMoney-btn')
-        // addMoneyBtn.addEventListener('click', (e) => {
-
-        // })
     },
     render: function(classNames) {
         classNames = classNames || ""
