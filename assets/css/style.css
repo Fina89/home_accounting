@@ -64,7 +64,8 @@
 }
 
 .mask {
-    width: 100%;
+    margin-left: -12px;
+    margin-right: -12px;
     background-image: url(../image/main.jpg);
     background-repeat: no-repeat;
     background-size: cover;
@@ -205,6 +206,7 @@ a.logo {
     from {
         transform: rotate(0deg);
     }
+
     to {
         transform: rotate(360deg);
     }
