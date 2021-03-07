@@ -298,19 +298,11 @@ const Accounts = {
 }
 
 const Operations = {
-<<<<<<< HEAD
     id: 'Operations',
-    title: 'Операции',
+    title: '<i class="far fa-list-alt"></i> Операции',
     render: function(classNames) {
         classNames = classNames || ""
         const html = `
-=======
-        id: 'Operations',
-        title: '<i class="far fa-list-alt"></i> Операции',
-        render: function(classNames) {
-            classNames = classNames || ""
-            const html = `
->>>>>>> 0391c18 (add icons)
     <p class="${classNames}">
     Операции
     </p>
