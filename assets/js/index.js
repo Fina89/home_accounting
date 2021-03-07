@@ -162,15 +162,18 @@ const SPA = function() {
             const categories = firebase.database().ref('user-' + user.uid).child('categories'); //получаем коллекцию по идентификатору
             const initCategories = [{
                     title: 'Продукты',
-                    color: '#ffffff'
+                    color: '#ffffff',
+                    amount: 0,
                 },
                 {
                     title: 'Транспорт',
-                    color: '#ffffff'
+                    color: '#ffffff',
+                    amount: 0,
                 },
                 {
                     title: 'Коммунальные платежи',
-                    color: '#ffffff'
+                    color: '#ffffff',
+                    amount: 0,
                 },
             ]
             for (let cat of initCategories) {

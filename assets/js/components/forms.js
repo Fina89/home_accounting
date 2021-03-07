@@ -118,9 +118,21 @@ const AddCategoryForm = {
             form.addEventListener('submit', (e) => {
                 e.preventDefault();
                 const ref = firebase.database().ref('user-' + this.uid).child('categories')
+                const date = new Date();
+                const year = date.getFullYear();
+                const month = date.getMonth();
                 const data = {
                     title: title.value,
-                    color: color.value
+                    color: color.value,
+                    amounts: {
+                        total: 0,
+                        [year]: {
+                            total: 0,
+                            [month]: {
+                                total: 0
+                            }
+                        }
+                    }
                 }
                 ref.push(data).then(() => {
                     window.dispatchEvent(dbEvent)

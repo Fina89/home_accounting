@@ -33,13 +33,82 @@ const Landing = {
 }
 
 const CategoryCard = {
-    render: function(id, category) {
+    init: function(id, category, accountsRef, categoriesRef, operationsRef, accounts) {
+        const card = document.querySelector(`[data-id="${id}"]`)
+        const addMoneyBtn = card.querySelector('.addMoney-btn')
+
+        addMoneyBtn.addEventListener('click', () => {
+            const money = card.querySelector('.money')
+            const accountId = card.querySelector('.account').value
+            const account = accounts[accountId]
+            const amount = Number(money.value)
+            if (isNaN(amount) || (amount <= 0)) {
+                return
+            }
+            const date = new Date();
+            const year = date.getFullYear();
+            const month = date.getMonth();
+            if (!(year in category.amounts)) {
+                category.amounts[year] = {
+                    total: 0
+                }
+            }
+            if (!(month in category.amounts[year])) {
+                category.amounts[year][month] = {
+                    total: 0
+                }
+            }
+            const data = {
+                category: {
+                    id: id,
+                    title: category.title
+                },
+                account: {
+                    id: accountId,
+                    title: account.title,
+                },
+                type: 'withdrawal',
+                amount: amount,
+                ts: date.getTime()
+            }
+            category.amounts.total += amount
+            category.amounts[year].total += amount
+            category.amounts[year][month].total += amount
+            operationsRef.push(data).then(() => {
+                account.amount -= amount
+                accountsRef.child(accountId).update({
+                    amount: account.amount,
+                })
+                categoriesRef.child(id).update({
+                    amounts: category.amounts,
+                })
+            })
+        })
+    },
+    render: function(accounts, id, category) {
+        let accountsHTML = '<select class="form-select account">'
+        for (let account in accounts) {
+            accountsHTML += `<option value="${account}" style="background-color: ${accounts[account].color}">${accounts[account].title}</option>`
+        }
+        accountsHTML += '</select>'
+        const date = new Date();
+        const year = date.getFullYear();
+        const month = date.getMonth();
+        console.log(category.amounts[year])
         const html = `
         <div class="col category-card" data-id="${id}">
             <div class="card" style="background-color: ${category.color}">
                 <div class="card-body">
                     <h5 class="card-title">${category.title}</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">Сумма</h6>
+                    <h6 class="card-subtitle mb-2 text-muted">Общий расход: ${category.amounts.total}</h6>
+                    <h6 class="card-subtitle mb-2 text-muted">Расход за текущий год: ${category.amounts[year].total}</h6>
+                    <h6 class="card-subtitle mb-2 text-muted">Расход за текущий месяц: ${category.amounts[year][month].total}</h6>
+                </div>
+                <div class="card-body">
+                <p class="card-text">Добавить расход</p>
+                ${accountsHTML}
+                <input type="number" class="form-control money" /> 
+                <button class="btn btn-sm btn-success mt-2 addMoney-btn">Добавить</button>
                 </div>
             </div>
         </div>`;
@@ -52,19 +121,40 @@ const Categories = {
     id: 'categories',
     title: 'Категории',
     auth: true,
-    getCategories: function(user) {
-        const categories = firebase.database().ref('user-' + user.uid).child('categories');
-        categories.get().then((response) => {
-            this.renderCategories(response.val())
-        })
+    accountsRef: null,
+    operationsRef: null,
+    categoriesRef: null,
+    data: {
+        accountsLoaded: false,
+        categoriesLoaded: false,
+        operationsLoaded: false
     },
-    renderCategories: function(data) {
+    getCategories: function(user) {
+        this.accountsRef = firebase.database().ref('user-' + user.uid).child('accounts');
+        this.operationsRef = firebase.database().ref(`user-${user.uid}`).child('operations');
+        this.categoriesRef = firebase.database().ref('user-' + user.uid).child('categories');
+        this.categoriesRef.off('value');
+        this.accountsRef.get().then((snapshot) => {
+            const accounts = snapshot.val()
+            this.categoriesRef.on('value', (snapshot) => {
+                this.renderCategories(accounts, snapshot.val())
+            });
+        });
+
+    },
+    renderCategories: function(accounts, data) {
         const categoryCards = document.querySelector(`#${this.id}-cards`)
+        if (!categoryCards) return;
         let categoryCardsHTML = ''
+        categoryCards.innerHTML = categoryCardsHTML;
         for (let cat in data) {
-            categoryCardsHTML += CategoryCard.render(cat, data[cat])
+            categoryCardsHTML += CategoryCard.render(accounts, cat, data[cat])
+
         }
         categoryCards.innerHTML = categoryCardsHTML
+        for (let cat in data) {
+            CategoryCard.init(cat, data[cat], this.accountsRef, this.categoriesRef, this.operationsRef, accounts)
+        }
     },
     render: function(classNames) {
         classNames = classNames || ""
@@ -164,11 +254,12 @@ const Accounts = {
         this.operationsRef = firebase.database().ref(`user-${user.uid}`).child('operations');
         this.accountsRef.off('value');
         this.accountsRef.on('value', (snapshot) => {
-            this.renderAccounts(snapshot.val(), user)
+            this.renderAccounts(snapshot.val())
         });
     },
-    renderAccounts: function(data, user) {
+    renderAccounts: function(data) {
         const accountsCards = document.querySelector(`#${this.id}-cards`)
+        if (!accountsCards) return;
         let accountsCardsHTML = ''
         accountsCards.innerHTML = accountsCardsHTML;
         for (let cat in data) {
