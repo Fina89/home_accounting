@@ -42,7 +42,6 @@
     flex-direction: column;
     background-color: #a9a9a9d9;
     min-height: calc(100vh - 50px);
-
 }
 
 .sidebar-item {
@@ -107,8 +106,6 @@
     color: black;
     padding: 15px;
 }
-
-
 
 a.logo {
     color: inherit;
@@ -208,7 +205,6 @@ a.logo {
     from {
         transform: rotate(0deg);
     }
-
     to {
         transform: rotate(360deg);
     }
@@ -233,4 +229,8 @@ a.logo {
 
 .hidden {
     display: none !important;
+}
+
+.circle:hover {
+    border-radius: 70%;
 }

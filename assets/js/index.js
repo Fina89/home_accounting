@@ -16,7 +16,9 @@ const pages = {
 const menuItems = {
     categories: Categories,
     graphs: Graphs,
-    accounts: Accounts
+    accounts: Accounts,
+    operations: Operations
+
 }
 const forms = {
     signInForm: SignInForm, //инициализировали форму авторизации
@@ -151,9 +153,9 @@ const SPA = function() {
             moduleView.renderContent(page, user);
         }
         this.signOut = function() {
-            firebase.auth().signOut()
-        }
-        //этот метод проверяет состояние юзера, залогинен ты или нет
+                firebase.auth().signOut()
+            }
+            //этот метод проверяет состояние юзера, залогинен ты или нет
         this.updateUserState = function(currentUser) {
             user = currentUser;
             this.updateState()

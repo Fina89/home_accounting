@@ -5,12 +5,12 @@ const Header = {
         const html = `
             <header id="${this.id}" class="header">
                 <div class="container header-container ${classNames}">
-                    <a href="/" class="logo">Home accounting</a>
+                    <a href="/" class="logo"><i class="fas fa-hand-holding-usd"></i> Домашняя бухгалтерия</a>
                     <div class="auth-controls" id="auth-controls">
-                        <a type="button" class="btn btn-light" id="auth-signin" data-modal="#signInForm-modal" href="#">Sign In</a>
-                        <a type="button" class="btn btn-light" id="auth-signup" data-modal="#signUpForm-modal" href="#">Sign Up</a>
+                        <a type="button" class="btn btn-light" id="auth-signin" data-modal="#signInForm-modal" href="#">Войти</a>
+                        <a type="button" class="btn btn-light" id="auth-signup" data-modal="#signUpForm-modal" href="#">Зарегистрироваться</a>
                         <div class="user-info hidden" id="auth-userinfo"></div>
-                        <a type="button" class="btn btn-light hidden" id="auth-logout">Log out</a>
+                        <a type="button" class="btn btn-light hidden" id="auth-logout">Выйти</a>
                     </div>
                 </div>
             </header>
@@ -19,29 +19,29 @@ const Header = {
     }
 }
 const Content = {
-    id: 'content',
-    render: function(classNames) {
-        classNames = classNames || ""
-        const html = `
+        id: 'content',
+        render: function(classNames) {
+            classNames = classNames || ""
+            const html = `
             <div id="${this.id}"  class="content container-fluid ${classNames}">
             </div>
         `;
-        return html;
+            return html;
+        }
     }
-}
-// боковое меню
+    // боковое меню
 const SideBar = {
-    id: 'sidebar',
-    render: function(classNames) {
-        classNames = classNames || ""
-        const html = `
+        id: 'sidebar',
+        render: function(classNames) {
+            classNames = classNames || ""
+            const html = `
             <div id="${this.id}"  class="sidebar ${classNames}">
             </div>
         `;
-        return html;
+            return html;
+        }
     }
-}
-// один пункт меню из сайд бар
+    // один пункт меню из сайд бар
 const SideBarItem = {
     id: 'sidebar',
     render: function(content, link, classNames) {
@@ -71,17 +71,17 @@ const Container = {
 }
 
 const Footer = {
-    id: 'footer',
-    render: function(classNames) {
-        classNames = classNames || ""
-        const html = `
+        id: 'footer',
+        render: function(classNames) {
+            classNames = classNames || ""
+            const html = `
             <div id="${this.id}"  class="${classNames}">
             </div>
         `;
-        return html;
+            return html;
+        }
     }
-}
-// класс, описывающий модалку
+    // класс, описывающий модалку
 function Modal(component) {
     this.id = component.id + '-modal';
     this.component = component;
