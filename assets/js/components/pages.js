@@ -97,7 +97,7 @@ const CategoryCard = {
         console.log(category.amounts[year])
         const html = `
         <div class="col category-card" data-id="${id}">
-            <div class="card" style="background-color: ${category.color}">
+            <div class="card circle" style="background-color: ${category.color}">
                 <div class="card-body">
                     <h5 class="card-title">${category.title}</h5>
                     <h6 class="card-subtitle mb-2 text-muted">Общий расход: ${category.amounts.total}</h6>

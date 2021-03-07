@@ -23,7 +23,7 @@ const Content = {
     render: function(classNames) {
         classNames = classNames || ""
         const html = `
-            <div id="${this.id}"  class="content container-fluid p-0 ${classNames}">
+            <div id="${this.id}"  class="content container-fluid ${classNames}">
             </div>
         `;
         return html;
