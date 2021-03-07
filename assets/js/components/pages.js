@@ -119,7 +119,7 @@ const CategoryCard = {
 //категории отражаются в зависимости от учетной записи 
 const Categories = {
     id: 'categories',
-    title: 'Категории',
+    title: '<i class="fas fa-money-bill-alt"></i> Категории расходов',
     auth: true,
     accountsRef: null,
     operationsRef: null,
@@ -185,7 +185,7 @@ const Categories = {
 //Отчет (графики)
 const Graphs = {
     id: 'graphs',
-    title: 'Обзор',
+    title: '<i class="fas fa-chart-bar"></i> Обзор',
     auth: true,
     render: function(classNames) {
         classNames = classNames || ""
@@ -227,7 +227,7 @@ const AccountCard = {
     render: function(id, account) {
         const html = `
         <div class="col account-card" data-id="${id}">
-            <div class="card" style="background-color: ${account.color}">
+            <div class="card" class="circle" style="background-color: ${account.color}">
                 <div class="card-body">
                     <h5 class="card-title">${account.title}</h5>
                     <h6 class="card-subtitle mb-2 text-muted">Сумма: ${account.amount}</h6>
@@ -245,7 +245,7 @@ const AccountCard = {
 //Счета
 const Accounts = {
     id: 'accounts',
-    title: 'Счета',
+    title: '<i class="fas fa-wallet"></i> Счета',
     auth: true,
     accountsRef: null,
     operationsRef: null,
@@ -298,11 +298,19 @@ const Accounts = {
 }
 
 const Operations = {
+<<<<<<< HEAD
     id: 'Operations',
     title: 'Операции',
     render: function(classNames) {
         classNames = classNames || ""
         const html = `
+=======
+        id: 'Operations',
+        title: '<i class="far fa-list-alt"></i> Операции',
+        render: function(classNames) {
+            classNames = classNames || ""
+            const html = `
+>>>>>>> 0391c18 (add icons)
     <p class="${classNames}">
     Операции
     </p>
