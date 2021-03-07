@@ -227,7 +227,7 @@ const AccountCard = {
     render: function(id, account) {
         const html = `
         <div class="col account-card" data-id="${id}">
-            <div class="card" class="circle" style="background-color: ${account.color}">
+            <div class="card circle" style="background-color: ${account.color}">
                 <div class="card-body">
                     <h5 class="card-title">${account.title}</h5>
                     <h6 class="card-subtitle mb-2 text-muted">Сумма: ${account.amount}</h6>
