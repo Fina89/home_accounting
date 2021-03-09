@@ -39,6 +39,8 @@ const CategoryCard = {
 
         addMoneyBtn.addEventListener('click', () => {
             const money = card.querySelector('.money')
+            const comment = card.querySelector('.comment')
+
             const accountId = card.querySelector('.account').value
             const account = accounts[accountId]
             const amount = Number(money.value)
@@ -69,6 +71,7 @@ const CategoryCard = {
                 },
                 type: 'withdrawal',
                 amount: amount,
+                comment: comment.value || '',
                 ts: date.getTime()
             }
             category.amounts.total += amount
@@ -107,7 +110,8 @@ const CategoryCard = {
                 <div class="card-body">
                 <p class="card-text">Добавить расход</p>
                 ${accountsHTML}
-                <input type="number" class="form-control money" /> 
+                <input type="number" class="form-control money" placeholder="Сумма" /> 
+                <input type="text" class="form-control comment" placeholder="Комментарий" /> 
                 <button class="btn btn-sm btn-success mt-2 addMoney-btn">Добавить</button>
                 </div>
             </div>
@@ -182,17 +186,179 @@ const Categories = {
     }
 }
 
+function Graph(data) {
+    this.data = data;
+}
+Graph.prototype.drawCanvas = function() {
+    return `<canvas id=${this.id}></canvas>`
+}
+Graph.prototype.drawGraph = function(timeFrame, year, month) {
+    let data;
+    let amounts;
+    switch (timeFrame) {
+        case 'all':
+            data = Object.values(this.data).map((el) => {
+                return {
+                    color: el.color,
+                    title: el.title,
+                    amount: el.amounts.total
+                }
+            })
+            amounts = Object.values(this.data).map((el) => el.amounts.total)
+            break;
+        case 'year':
+            if (!year) return
+            data = Object.values(this.data).map((el) => {
+                if (year in el.amounts) {
+                    return {
+                        color: el.color,
+                        title: el.title,
+                        amount: el.amounts[year].total
+                    }
+                }
+                return null;
+            })
+            amounts = Object.values(this.data).map((el) => {
+                if (year in el.amounts) {
+                    return el.amounts[year].total
+                }
+                return null;
+            })
+            break;
+        case 'month':
+            if (!year || !month) return
+            data = Object.values(this.data).map((el) => {
+                if ((year in el.amounts) && (month in el.amounts[year]))
+                    return {
+                        color: el.color,
+                        title: el.title,
+                        amount: el.amounts[year][month].total
+                    }
+                return null
+            })
+            amounts = Object.values(this.data).map((el) => {
+                if ((year in el.amounts) && (month in el.amounts[year])) {
+                    return el.amounts[year][month].total
+                }
+                return null;
+            })
+            break;
+        default:
+            return
+    }
+    data = data.filter((el) => el)
+    amounts = amounts.filter((el) => el)
+    const maxAmount = Math.max.apply(null, amounts);
+    const totalAmount = data.reduce((prev, cur) => prev + cur.amount, 0)
+    const canvas = document.getElementById(this.id);
+    const content = document.getElementById('content')
+    canvas.width = content.offsetWidth - 50;
+    canvas.height = 1000;
+    const ctx = canvas.getContext('2d')
+
+    let widthPercentage = 0
+    if (!data.length) {
+        ctx.fillStyle = '#000000'
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.font = '30px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText("Нет данных за выбранный период", canvas.width / 2, canvas.height / 2)
+        return
+    }
+    let animation = setInterval(() => {
+        ctx.fillStyle = '#ffffff'
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        let Y = 50;
+        let X = 150;
+        let shiftY = 50
+        ctx.lineWidth = 25
+        for (let cat of data) {
+            const barWidth = Math.ceil((cat.amount * (canvas.width - 300) * (widthPercentage / 100)) / maxAmount);
+            const percentage = Math.round((cat.amount / totalAmount) * 10000) / 100
+            ctx.beginPath();
+            ctx.moveTo(X, Y);
+            ctx.lineTo(X + barWidth, Y);
+            ctx.strokeStyle = cat.color;
+            ctx.stroke();
+            ctx.fillStyle = '#000000'
+            ctx.font = '20px Arial';
+            ctx.textAlign = 'start';
+            ctx.fillText(cat.title, 0, Y)
+            ctx.textAlign = "end";
+            ctx.fillText(`${cat.amount} (${percentage}%)`, canvas.width, Y);
+            Y += shiftY;
+        }
+        widthPercentage += 5
+        if (widthPercentage > 100) {
+            clearInterval(animation)
+        }
+    }, 50)
+
+
+}
 //Отчет (графики)
 const Graphs = {
     id: 'graphs',
     title: '<i class="fas fa-chart-bar"></i> Обзор',
     auth: true,
+    categoriesRef: null,
+    getCategories: function(user, timeframe, year, month) {
+        this.categoriesRef = firebase.database().ref(`user-${user.uid}`).child('categories');
+        this.categoriesRef.off('value');
+        this.categoriesRef.on('value', (snapshot) => {
+            this.renderGraphs(snapshot.val(), timeframe, year, month)
+        });
+    },
+    renderGraphs: function(data, timeframe, year, month) {
+        const graphs = document.querySelector(`#${this.id}`)
+        graphs.innerHTML = ''
+        const graph = new Graph(data)
+        const graphHTML = graph.drawCanvas()
+        graphs.innerHTML = graphHTML
+        graph.drawGraph(timeframe, year, month)
+
+    },
+    init: function(user) {
+        const btn = document.querySelector('#showGraph');
+        btn.addEventListener('click', () => {
+            const timeframe = document.querySelector('#timeframe').value;
+            const year = document.querySelector('#year').value;
+            const month = document.querySelector('#month').value;
+            this.getCategories(user, timeframe, year, month)
+        })
+        this.getCategories(user, 'all')
+    },
     render: function(classNames) {
         classNames = classNames || ""
+        const months = ["январь", "февраль", "март", "апрель", "май", "июнь", "июль", "август", "сентябрь", "октябрь", "ноябрь", "декабрь"]
+        let monthsOptions = ''
+        for (let i = 0; i < months.length; i++) {
+            monthsOptions += `<option value="${i}">${months[i]}</option>`
+        }
         const html = `
-            <p class="${classNames}">
-            Отчет
-            </p>
+            <div class="row g-3">
+                <div class="col-auto">
+                    <select id="timeframe" class="form-select">
+                    <option value="all">За все время</option>
+                    <option value="year">За год</option>
+                    <option value="month">За месяц</option>
+                    </select>
+                </div>
+                <div class="col-auto">
+                    <input type="number" class="form-control" id="year" max="3000" min="2000" placeholder="Год" />
+                </div>
+                <div class="col-auto">
+                    <select id="month" class="form-select">
+                    ${monthsOptions}
+                    </select>
+                </div>
+                <div class="col-auto">
+                    <button class="btn btn-primary" id="showGraph">Показать</button>
+                </div>
+            </div>
+            <div class="col" id="${this.id}">
+            </div>
+            </div>
         `
         return html
     }
@@ -204,6 +370,7 @@ const AccountCard = {
         const currentAccountRef = accountsRef.child(id)
         addMoneyBtn.addEventListener('click', () => {
             const money = card.querySelector('.money')
+            const comment = card.querySelector('.comment')
             const amount = Number(money.value)
             if (isNaN(amount) || (amount <= 0)) {
                 return
@@ -215,6 +382,7 @@ const AccountCard = {
                 },
                 type: 'deposit',
                 amount: amount,
+                comment: comment.value || '',
                 ts: new Date().getTime()
             }
             operationsRef.push(data).then(() => {
@@ -234,7 +402,8 @@ const AccountCard = {
                 </div>
                 <div class="card-body">
                 <p class="card-text">Добавить сумму</p>
-                <input type="number" class="form-control money" /> 
+                <input type="number" class="form-control money" placeholder="Сумма" /> 
+                <input type="text" class="form-control comment" placeholder="Комментарий" /> 
                 <button class="btn btn-sm btn-success mt-2 addMoney-btn">Добавить</button>
                 </div>
             </div>
@@ -297,15 +466,82 @@ const Accounts = {
     }
 }
 
+
 const Operations = {
-    id: 'Operations',
+    id: 'operations',
     title: '<i class="far fa-list-alt"></i> Операции',
+    auth: true,
+    accountsRef: null,
+    operationsRef: null,
+    getOperations: function(user) {
+        this.operationsRef = firebase.database().ref(`user-${user.uid}`).child('operations')
+        this.operationsRef.off('value');
+        this.operationsRef.on('value', (snapshot) => {
+            this.renderOperations(snapshot.val())
+        });
+    },
+    renderOperations: function(data) {
+        const opArray = Object.values(data);
+        const sortedArray = opArray.sort((a, b) => {
+            return b.ts - a.ts
+        })
+        const operationsTable = document.querySelector(`#${this.id}-table`)
+        if (!operationsTable) return;
+        let operationsTableHTML = ''
+        operationsTable.innerHTML = operationsTableHTML;
+        for (let op of sortedArray) {
+            const date = new Date(op.ts).toLocaleDateString('en-GB');
+            const amount = op.amount;
+            let comment = op.comment || '';
+            let from = '';
+            let to = '';
+            let type, className;
+            if (op.type === 'withdrawal') {
+                type = 'Расход';
+                className = 'table-danger';
+                from = op.account.title;
+                to = op.category.title;
+            } else if (op.type === 'deposit') {
+                type = 'Начисление';
+                className = 'table-success'
+                to = op.account.title;
+            } else {
+                type = 'Другое';
+                className = 'table-light'
+            }
+            operationsTableHTML += `
+            <tr class="${className}">
+            <td>${date}</td>
+            <td>${amount}</td>
+            <td>${type}</td>
+            <td>${from}</td>
+            <td>${to}</td>
+            <td>${comment}</td>
+            </tr>`
+        }
+        operationsTable.innerHTML = operationsTableHTML
+    },
     render: function(classNames) {
         classNames = classNames || ""
         const html = `
-    <p class="${classNames}">
-    Операции
-    </p>
+    <div class="row">
+    <div class="col">
+    <table class="table table-sm">
+    <thead>
+    <tr>
+    <th scope="col">Дата</th>
+      <th scope="col">Сумма</th>
+      <th scope="col">Тип операции</th>
+      <th scope="col">Со счета</th>
+      <th scope="col">Куда</th>
+      <th scope="col">Комментарий</th>
+    </tr>
+  </thead>
+  <tbody id="${this.id}-table">
+  </tbody>
+    </table>
+    </div>
+    </div>
 `
         return html
     }

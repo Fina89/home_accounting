@@ -10,7 +10,8 @@ const pages = {
     graphs: Graphs,
     categories: Categories,
     error404: Error404,
-    accounts: Accounts
+    accounts: Accounts,
+    operations: Operations
 }
 
 const menuItems = {
@@ -62,6 +63,14 @@ const SPA = function() {
                 case 'accounts': //если ключом является Категория, то выполняется код
                     moduleContent.innerHTML = route.render(`${route.id}-page`); //отрисовываются категории конкретного юзера
                     if (user) route.getAccounts(user)
+                    break;
+                case 'operations': //если ключом является Категория, то выполняется код
+                    moduleContent.innerHTML = route.render(`${route.id}-page`); //отрисовываются категории конкретного юзера
+                    if (user) route.getOperations(user)
+                    break;
+                case 'graphs': //если ключом является Категория, то выполняется код
+                    moduleContent.innerHTML = route.render(`${route.id}-page`); //отрисовываются категории конкретного юзера
+                    if (user) route.init(user)
                     break;
                 default:
                     moduleContent.innerHTML = route.render(`${route.id}-page`); //отрисовываем согласно ключу
