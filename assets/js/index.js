@@ -34,7 +34,6 @@ const modals = {
     addAccountModal: new Modal(forms.addAccountForm)
 }
 
-const dbEvent = new Event('queryComplete')
 const formEvent = new Event('formsuccess')
 
 const SPA = function() {
@@ -43,7 +42,6 @@ const SPA = function() {
         let moduleContent = null;
         let moduleContainer = null;
         let moduleRoutes = null; //страницы
-        let pageLoadedEvent = null;
         this.init = function(container, model) {
             moduleModel = model;
             moduleContainer = container;
@@ -204,9 +202,6 @@ const SPA = function() {
             window.addEventListener('pageLoaded', (e) => {
                 if (e.detail.page == "categories") this.initCategoryPage()
                 if (e.detail.page == "accounts") this.initAccountsPage()
-            })
-            window.addEventListener('queryComplete', (e) => {
-                this.updateState()
             })
             window.addEventListener('formsuccess', (e) => {
                 for (let modal in modals) {

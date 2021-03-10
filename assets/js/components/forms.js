@@ -1,4 +1,4 @@
-// форму авторизации пришлось сделать через класс? т,к, по-другому не полчилось
+// форму авторизации пришлось сделать через класс, т,к, по-другому не полчилось
 
 
 const SignInForm = {
@@ -23,7 +23,7 @@ const SignInForm = {
             .then((userCredential) => { // прилетает ответ
                 // Signed in
                 unblockForm(this) //разблокируем форму
-                window.dispatchEvent(formEvent)
+                window.dispatchEvent(formEvent) // запускаю свое собственносозданное событие, от которого закроется модальное окно
             })
             .catch((error) => { //если прилетела ошибка
                 showError(form, error.message) //вызываем метод обработки ошибки
@@ -135,7 +135,7 @@ const AddCategoryForm = {
                     }
                 }
                 ref.push(data).then(() => {
-                    window.dispatchEvent(dbEvent)
+                    window.dispatchEvent(formEvent)
                 })
             })
         }

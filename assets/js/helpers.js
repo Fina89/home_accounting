@@ -13,12 +13,12 @@ function showError(form, errorMessage) { //(принимает в себя по�
     }, 3000)
 }
 
-function blockForm(form) {
+function blockForm(form) { //заблокировать форму
     let formEl = document.querySelector('#' + form.id)
     let inputs = formEl.querySelectorAll('input, button')
     for (let el of inputs) {
-        el.setAttribute('disabled', 'disabled')
-        if (el.tagName == 'BUTTON') {
+        el.setAttribute('disabled', 'disabled') // всем инпутам и баттонам ставим дизэйбл
+        if (el.tagName == 'BUTTON') { //если тег ябляется баттоном, то внутри кнопки появляется спинер
             el.innerHTML = `
             <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
             Loading...
@@ -27,13 +27,13 @@ function blockForm(form) {
     }
 }
 
-function unblockForm(form) {
+function unblockForm(form) { // разблокировать форму
     let formEl = document.querySelector('#' + form.id)
     let inputs = formEl.querySelectorAll('input, button')
     for (let el of inputs) {
         el.removeAttribute('disabled')
         if (el.tagName == 'BUTTON') {
-            el.innerHTML = form.action
+            el.innerHTML = form.action //свойство экшн объекта формы
         }
     }
 }
