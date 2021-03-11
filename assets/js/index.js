@@ -1,7 +1,6 @@
 const components = {
     header: Header,
     container: Container,
-    footer: Footer,
     loadingScreen: LoadingScreen,
 }
 
@@ -108,7 +107,7 @@ const SPA = function() {
         this.renderSidebar = function() {
             let sidebar = moduleContainer.querySelector('#sidebar');
             for (let item in menuItems) {
-                let content = menuItems[item].title;
+                let content = menuItems[item].menuTitle;
                 let link = menuItems[item].id;
                 sidebar.innerHTML += SideBarItem.render(content, link);
             }
@@ -172,17 +171,14 @@ const SPA = function() {
             const initCategories = [{
                     title: 'Продукты',
                     color: '#ffffff',
-                    amount: 0,
                 },
                 {
                     title: 'Транспорт',
                     color: '#ffffff',
-                    amount: 0,
                 },
                 {
                     title: 'Коммунальные платежи',
                     color: '#ffffff',
-                    amount: 0,
                 },
             ]
             for (let cat of initCategories) {
