@@ -32,14 +32,12 @@
     color: black;
 }
 
-.content-container {
-    display: flex;
-}
-
 .sidebar {
     display: flex;
-    width: 15%;
     flex-direction: column;
+}
+
+.sidebar-col {
     background-color: #a9a9a9d9;
     min-height: calc(100vh - 50px);
 }
@@ -87,9 +85,6 @@
     padding: 15px;
 }
 
-.content {
-    width: 85%;
-}
 
 .landing-page {
     font-size: 30px;
@@ -233,6 +228,7 @@ a.logo {
     display: none !important;
 }
 
-.circle:hover {
-    border-radius: 70%;
+.account-card:hover,
+.category-card:hover {
+    transform: scale(1.02, 1.02);
 }

@@ -61,26 +61,19 @@ const Container = {
         const sidebar = SideBar.render()
         const content = Content.render()
         const html = `
-            <div class="content-container ${classNames}">
-                ${sidebar}
-                ${content}
+            <div class="container-fluid ${classNames}">
+            <div class="row">
+                <div class="col-2 col-md-3 sidebar-col">${sidebar}</div>
+                <div class="col-10 col-md-9">${content}</div>
+            </div>
+                </div>
+                
             </div>
         `;
         return html;
     }
 }
 
-const Footer = {
-    id: 'footer',
-    render: function(classNames) {
-        classNames = classNames || ""
-        const html = `
-            <div id="${this.id}"  class="${classNames}">
-            </div>
-        `;
-        return html;
-    }
-}
 // класс, описывающий модалку
 function Modal(component) {
     this.id = component.id + '-modal';

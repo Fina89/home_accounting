@@ -97,10 +97,24 @@ const CategoryCard = { // объект одной каторчки катего�
         const date = new Date();
         const year = date.getFullYear();
         const month = date.getMonth();
-        console.log(category.amounts[year])
+        if (!('amounts' in category)) {
+            category.amounts = {
+                total: 0
+            }
+        }
+        if (!(year in category.amounts)) {
+            category.amounts[year] = {
+                total: 0
+            }
+        }
+        if (!(month in category.amounts[year])) {
+            category.amounts[year][month] = {
+                total: 0
+            }
+        }
         const html = `
-        <div class="col category-card" data-id="${id}">
-            <div class="card circle" style="background-color: ${category.color}">
+        <div class="col-12 col-md-6 col-lg-4 mb-3 category-card" data-id="${id}">
+            <div class="card" style="background-color: ${category.color}">
                 <div class="card-body">
                     <h5 class="card-title">${category.title}</h5>
                     <h6 class="card-subtitle mb-2 text-muted">Общий расход: ${category.amounts.total}</h6>
@@ -109,9 +123,24 @@ const CategoryCard = { // объект одной каторчки катего�
                 </div>
                 <div class="card-body">
                 <p class="card-text">Добавить расход</p>
-                ${accountsHTML}
-                <input type="number" class="form-control money" placeholder="Сумма" /> 
-                <input type="text" class="form-control comment" placeholder="Комментарий" /> 
+                <div class="form-group row mb-2">
+                    <label for="inputEmail3" class="col-sm-4 col-form-label">Счет</label>
+                    <div class="col-sm-8">
+                    ${accountsHTML}
+                    </div>
+                </div>
+                <div class="form-group row mb-2">
+                    <label for="inputEmail3" class="col-sm-4 col-form-label">Сумма</label>
+                    <div class="col-sm-8">
+                    <input type="number" class="form-control money" placeholder="Сумма" /> 
+                    </div>
+                </div>
+                <div class="form-group row mb-2">
+                    <label for="inputEmail3" class="col-sm-4 col-form-label">Детали</label>
+                    <div class="col-sm-8">
+                    <input type="text" class="form-control comment" placeholder="Комментарий" /> 
+                    </div>
+                </div>
                 <button class="btn btn-sm btn-success mt-2 addMoney-btn">Добавить</button>
                 </div>
             </div>
@@ -123,7 +152,8 @@ const CategoryCard = { // объект одной каторчки катего�
 //категории отражаются в зависимости от учетной записи 
 const Categories = { // когда поменялся хэш и стал катигори, то обображаем рендер 163 стр. если залогинен польховательтель, то вызывает гет катигориз
     id: 'categories',
-    title: '<i class="fas fa-money-bill-alt"></i> Категории расходов',
+    title: 'Категории расходов',
+    menuTitle: '<i class="fas fa-money-bill-alt"></i> Категории расходов',
     auth: true,
     accountsRef: null,
     operationsRef: null,
@@ -149,11 +179,18 @@ const Categories = { // когда поменялся хэш и стал кат�
     renderCategories: function(accounts, data) {
         const categoryCards = document.querySelector(`#${this.id}-cards`); //где будут лежать категории
         if (!categoryCards) return;
+<<<<<<< HEAD
         let categoryCardsHTML = '';
         categoryCards.innerHTML = categoryCardsHTML; // опустошаем контейнер
         for (let cat in data) { // бежим циклом по категориям из б/д
             categoryCardsHTML += CategoryCard.render(accounts, cat, data[cat]) //создаем штмл со всеми карточками
 
+=======
+        let categoryCardsHTML = ''
+        categoryCards.innerHTML = categoryCardsHTML;
+        for (let cat in data) {
+            categoryCardsHTML += CategoryCard.render(accounts, cat, data[cat])
+>>>>>>> 0e90be7 (asd)
         }
         categoryCards.innerHTML = categoryCardsHTML; // добавляем на страницу штмл
         for (let cat in data) {
@@ -165,20 +202,16 @@ const Categories = { // когда поменялся хэш и стал кат�
         const html = `
         <div class="row">
             <div class="col">
-                <p class="h1 ${classNames}">
+                <h2 class="${classNames}">
                 Категории
-                </p>
+                </h2>
             </div>
         </div>
-        <div id="${this.id}-cards" class="row row-cols-1 row-cols-md-3 g-4">            
+        <div id="${this.id}-cards" class="row">            
         </div>
-        <div class="row row-cols-1">
-        <div class="col" data-modal="#addCategoryForm-modal">
-                <div class="card">
-                    <div class="card-body add-category" >
-                    <i class="fas fa-plus-circle"></i>
-                    </div>
-                </div>
+        <div class="row ">
+        <div class="col">  
+              <button type="button" class="btn btn-success add-accounts" data-modal="#addCategoryForm-modal">Добавить категорию</button>
             </div>
         </div>
         `
@@ -299,7 +332,8 @@ Graph.prototype.drawGraph = function(timeFrame, year, month) {
 //Отчет (графики)//сначала ендер, отрисовка кнопок, потом инит, вешаем события, потом гет катигори и рендер граф
 const Graphs = {
     id: 'graphs',
-    title: '<i class="fas fa-chart-bar"></i> Обзор',
+    title: 'Обзор',
+    menuTitle: '<i class="fas fa-chart-bar"></i> Обзор',
     auth: true,
     categoriesRef: null,
     getCategories: function(user, timeframe, year, month) {
@@ -336,7 +370,12 @@ const Graphs = {
             monthsOptions += `<option value="${i}">${months[i]}</option>`
         }
         const html = `
-            <div class="row g-3">
+        <div class="row">
+            <div class="col-12">
+            <h2>Отчеты</h2>
+            </div>
+        </div>
+            <div class="row">
                 <div class="col-auto">
                     <select id="timeframe" class="form-select">
                     <option value="all">За все время</option>
@@ -356,8 +395,9 @@ const Graphs = {
                     <button class="btn btn-primary" id="showGraph">Показать</button>
                 </div>
             </div>
-            <div class="col" id="${this.id}">
-            </div>
+            <div class="row">
+                <div class="col" id="${this.id}">
+                </div>
             </div>
         `
         return html
@@ -394,16 +434,26 @@ const AccountCard = {
     },
     render: function(id, account) {
         const html = `
-        <div class="col account-card" data-id="${id}">
-            <div class="card circle" style="background-color: ${account.color}">
+        <div class="col-12 col-md-6 col-lg-4 mb-3 account-card" data-id="${id}">
+            <div class="card" style="background-color: ${account.color}">
                 <div class="card-body">
                     <h5 class="card-title">${account.title}</h5>
                     <h6 class="card-subtitle mb-2 text-muted">Сумма: ${account.amount}</h6>
                 </div>
                 <div class="card-body">
                 <p class="card-text">Добавить сумму</p>
-                <input type="number" class="form-control money" placeholder="Сумма" /> 
-                <input type="text" class="form-control comment" placeholder="Комментарий" /> 
+                <div class="form-group row mb-2">
+                    <label for="inputEmail3" class="col-sm-4 col-form-label">Сумма</label>
+                    <div class="col-sm-8">
+                    <input type="number" class="form-control money" placeholder="Сумма" /> 
+                    </div>
+                </div>
+                <div class="form-group row mb-2">
+                    <label for="inputEmail3" class="col-sm-4 col-form-label">Детали</label>
+                    <div class="col-sm-8">
+                    <input type="text" class="form-control comment" placeholder="Комментарий" /> 
+                    </div>
+                </div>
                 <button class="btn btn-sm btn-success mt-2 addMoney-btn">Добавить</button>
                 </div>
             </div>
@@ -414,7 +464,8 @@ const AccountCard = {
 //Счета
 const Accounts = {
     id: 'accounts',
-    title: '<i class="fas fa-wallet"></i> Счета',
+    title: 'Счета',
+    menuTitle: '<i class="fas fa-wallet"></i> Счета',
     auth: true,
     accountsRef: null,
     operationsRef: null,
@@ -445,19 +496,16 @@ const Accounts = {
         const html = `
         <div class="row">
             <div class="col">
-                <p class="h1 ${classNames}">
+                <h2 class="${classNames}">
                 Счета
-                </p>
+                </h2>
             </div>
         </div>
-        <div id="${this.id}-cards" class="row row-cols-1 row-cols-md-3 g-4">            
+        <div id="${this.id}-cards" class="row">            
         </div>
-        <div class="row row-cols-1">
-        <div class="col" data-modal="#addAccountForm-modal">
-                <div class="card">
-                    <div class="card-body add-accounts" >
-                    <i class="fas fa-plus-circle"></i>
-                    </div>
+        <div class="row">
+        <div class="col" >
+        <button type="button" class="btn btn-success add-accounts" data-modal="#addAccountForm-modal">Добавить счет</button>
                 </div>
             </div>
         </div>
@@ -469,7 +517,8 @@ const Accounts = {
 
 const Operations = {
     id: 'operations',
-    title: '<i class="far fa-list-alt"></i> Операции',
+    title: 'Операции',
+    menuTitle: '<i class="far fa-list-alt"></i> Операции',
     auth: true,
     accountsRef: null,
     operationsRef: null,
@@ -524,6 +573,11 @@ const Operations = {
     render: function(classNames) {
         classNames = classNames || ""
         const html = `
+        <div class="row">
+        <div class="col-12">
+        <h2>Операции</h2>
+        </div>
+    </div>
     <div class="row">
     <div class="col">
     <table class="table table-sm">
