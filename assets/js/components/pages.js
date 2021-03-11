@@ -32,8 +32,8 @@ const Landing = {
     }
 }
 
-const CategoryCard = {
-    init: function(id, category, accountsRef, categoriesRef, operationsRef, accounts) {
+const CategoryCard = { // объект одной каторчки категории расходов
+    init: function(id, category, accountsRef, categoriesRef, operationsRef, accounts) { //сначала происодит рендер, 
         const card = document.querySelector(`[data-id="${id}"]`)
         const addMoneyBtn = card.querySelector('.addMoney-btn')
 
@@ -41,16 +41,16 @@ const CategoryCard = {
             const money = card.querySelector('.money')
             const comment = card.querySelector('.comment')
 
-            const accountId = card.querySelector('.account').value
-            const account = accounts[accountId]
-            const amount = Number(money.value)
+            const accountId = card.querySelector('.account').value; //получаем значения из инпута счет
+            const account = accounts[accountId]; // по айдишнику выбиаю конкретный счет
+            const amount = Number(money.value); // сумма, которую мы записали в расход
             if (isNaN(amount) || (amount <= 0)) {
                 return
             }
-            const date = new Date();
+            const date = new Date(); // дата операции 
             const year = date.getFullYear();
             const month = date.getMonth();
-            if (!(year in category.amounts)) {
+            if (!(year in category.amounts)) { // если операция первая в году, то создаем новый ключ с новым годом
                 category.amounts[year] = {
                     total: 0
                 }
@@ -60,7 +60,7 @@ const CategoryCard = {
                     total: 0
                 }
             }
-            const data = {
+            const data = { // объект операции, которую положим в базу
                 category: {
                     id: id,
                     title: category.title
@@ -69,15 +69,15 @@ const CategoryCard = {
                     id: accountId,
                     title: account.title,
                 },
-                type: 'withdrawal',
+                type: 'withdrawal', // тип операции - изъятие денег
                 amount: amount,
                 comment: comment.value || '',
                 ts: date.getTime()
             }
-            category.amounts.total += amount
+            category.amounts.total += amount // обновляем суммы на счетах за опеделенный период
             category.amounts[year].total += amount
             category.amounts[year][month].total += amount
-            operationsRef.push(data).then(() => {
+            operationsRef.push(data).then(() => { // отпавляем данные об операции в б/д
                 account.amount -= amount
                 accountsRef.child(accountId).update({
                     amount: account.amount,
@@ -88,7 +88,7 @@ const CategoryCard = {
             })
         })
     },
-    render: function(accounts, id, category) {
+    render: function(accounts, id, category) { //сначала происодит рендер, т.к. нам нужен штмл
         let accountsHTML = '<select class="form-select account">'
         for (let account in accounts) {
             accountsHTML += `<option value="${account}" style="background-color: ${accounts[account].color}">${accounts[account].title}</option>`
@@ -121,7 +121,7 @@ const CategoryCard = {
 }
 
 //категории отражаются в зависимости от учетной записи 
-const Categories = {
+const Categories = { // когда поменялся хэш и стал катигори, то обображаем рендер 163 стр. если залогинен польховательтель, то вызывает гет катигориз
     id: 'categories',
     title: '<i class="fas fa-money-bill-alt"></i> Категории расходов',
     auth: true,
@@ -133,31 +133,31 @@ const Categories = {
         categoriesLoaded: false,
         operationsLoaded: false
     },
-    getCategories: function(user) {
+    getCategories: function(user) { // получаем ссылки на базу данных
         this.accountsRef = firebase.database().ref('user-' + user.uid).child('accounts');
         this.operationsRef = firebase.database().ref(`user-${user.uid}`).child('operations');
         this.categoriesRef = firebase.database().ref('user-' + user.uid).child('categories');
-        this.categoriesRef.off('value');
-        this.accountsRef.get().then((snapshot) => {
-            const accounts = snapshot.val()
-            this.categoriesRef.on('value', (snapshot) => {
-                this.renderCategories(accounts, snapshot.val())
+        this.categoriesRef.off('value'); // сбросить слушатель и повесить новый
+        this.accountsRef.get().then((snapshot) => { // есть ссылка на базу со счетами, достаем значения из базы данных
+            const accounts = snapshot.val() // получили все наши счета
+            this.categoriesRef.on('value', (snapshot) => { // достаем все наши категории расходов
+                this.renderCategories(accounts, snapshot.val()) // отрисовываем контейнер для карточек
             });
         });
 
     },
     renderCategories: function(accounts, data) {
-        const categoryCards = document.querySelector(`#${this.id}-cards`)
+        const categoryCards = document.querySelector(`#${this.id}-cards`); //где будут лежать категории
         if (!categoryCards) return;
-        let categoryCardsHTML = ''
-        categoryCards.innerHTML = categoryCardsHTML;
-        for (let cat in data) {
-            categoryCardsHTML += CategoryCard.render(accounts, cat, data[cat])
+        let categoryCardsHTML = '';
+        categoryCards.innerHTML = categoryCardsHTML; // опустошаем контейнер
+        for (let cat in data) { // бежим циклом по категориям из б/д
+            categoryCardsHTML += CategoryCard.render(accounts, cat, data[cat]) //создаем штмл со всеми карточками
 
         }
-        categoryCards.innerHTML = categoryCardsHTML
+        categoryCards.innerHTML = categoryCardsHTML; // добавляем на страницу штмл
         for (let cat in data) {
-            CategoryCard.init(cat, data[cat], this.accountsRef, this.categoriesRef, this.operationsRef, accounts)
+            CategoryCard.init(cat, data[cat], this.accountsRef, this.categoriesRef, this.operationsRef, accounts) // инит.
         }
     },
     render: function(classNames) {
@@ -195,16 +195,16 @@ Graph.prototype.drawCanvas = function() {
 Graph.prototype.drawGraph = function(timeFrame, year, month) {
     let data;
     let amounts;
-    switch (timeFrame) {
+    switch (timeFrame) { // за весь период
         case 'all':
-            data = Object.values(this.data).map((el) => {
+            data = Object.values(this.data).map((el) => { // получили массив из трех эл
                 return {
                     color: el.color,
                     title: el.title,
                     amount: el.amounts.total
                 }
             })
-            amounts = Object.values(this.data).map((el) => el.amounts.total)
+            amounts = Object.values(this.data).map((el) => el.amounts.total) // список сумм расходов
             break;
         case 'year':
             if (!year) return
@@ -236,7 +236,7 @@ Graph.prototype.drawGraph = function(timeFrame, year, month) {
                     }
                 return null
             })
-            amounts = Object.values(this.data).map((el) => {
+            amounts = Object.values(this.data).map((el) => { // если за период не существует данных
                 if ((year in el.amounts) && (month in el.amounts[year])) {
                     return el.amounts[year][month].total
                 }
@@ -246,10 +246,10 @@ Graph.prototype.drawGraph = function(timeFrame, year, month) {
         default:
             return
     }
-    data = data.filter((el) => el)
-    amounts = amounts.filter((el) => el)
-    const maxAmount = Math.max.apply(null, amounts);
-    const totalAmount = data.reduce((prev, cur) => prev + cur.amount, 0)
+    data = data.filter((el) => el) // возвращаем элемент (тру, фолз)
+    amounts = amounts.filter((el) => el) // возвращаем только суммы
+    const maxAmount = Math.max.apply(null, amounts); // максимальная сумма будет занимать максимально места на экране
+    const totalAmount = data.reduce((prev, cur) => prev + cur.amount, 0) // сложили все суммы расходов(100%)
     const canvas = document.getElementById(this.id);
     const content = document.getElementById('content')
     canvas.width = content.offsetWidth - 50;
@@ -257,7 +257,7 @@ Graph.prototype.drawGraph = function(timeFrame, year, month) {
     const ctx = canvas.getContext('2d')
 
     let widthPercentage = 0
-    if (!data.length) {
+    if (!data.length) { // еси нет данных
         ctx.fillStyle = '#000000'
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.font = '30px Arial';
@@ -273,8 +273,8 @@ Graph.prototype.drawGraph = function(timeFrame, year, month) {
         let shiftY = 50
         ctx.lineWidth = 25
         for (let cat of data) {
-            const barWidth = Math.ceil((cat.amount * (canvas.width - 300) * (widthPercentage / 100)) / maxAmount);
-            const percentage = Math.round((cat.amount / totalAmount) * 10000) / 100
+            const barWidth = Math.ceil((cat.amount * (canvas.width - 300) * (widthPercentage / 100)) / maxAmount); // длина строки графика
+            const percentage = Math.round((cat.amount / totalAmount) * 10000) / 100 // сколько процентов, пишется в конце строки
             ctx.beginPath();
             ctx.moveTo(X, Y);
             ctx.lineTo(X + barWidth, Y);
@@ -296,7 +296,7 @@ Graph.prototype.drawGraph = function(timeFrame, year, month) {
 
 
 }
-//Отчет (графики)
+//Отчет (графики)//сначала ендер, отрисовка кнопок, потом инит, вешаем события, потом гет катигори и рендер граф
 const Graphs = {
     id: 'graphs',
     title: '<i class="fas fa-chart-bar"></i> Обзор',

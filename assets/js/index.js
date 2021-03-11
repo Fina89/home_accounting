@@ -28,7 +28,7 @@ const forms = {
     addAccountForm: AddAccountForm
 }
 const modals = {
-    signUpModal: new Modal(forms.signUpForm), //сразу инициализируем модалку регистрации
+    signUpModal: new Modal(forms.signUpForm), //инициаизируем модалку с разными формами
     signInModal: new Modal(forms.signInForm),
     addCategoryModal: new Modal(forms.addCategoryForm),
     addAccountModal: new Modal(forms.addAccountForm)
@@ -50,7 +50,7 @@ const SPA = function() {
             this.renderSidebar(); //вызываем метод отрисовки меню
         }
         this.renderContent = function(routeName, user) {
-            routeName = routeName || "landing"; //отобразить определенную страницу? либо страницу по умолчанию(лэндинг)
+            routeName = routeName || "landing"; //отобразить определенную страницу. либо страницу по умолчанию(лэндинг)
             let route = moduleRoutes[routeName] || pages.error404;
             route = (!user && route.auth) ? pages.error404 : route;
             switch (route.id) {
@@ -152,11 +152,11 @@ const SPA = function() {
                 color: color
             }
             accounts.push(newAcc);
-            this.updateState(page)
+            this.updateState(page);
             modals.addAccountModal.hide()
         }
         this.updateState = function(currentPage) {
-            page = currentPage || page
+            page = currentPage || page;
             moduleView.renderContent(page, user);
         }
         this.signOut = function() {
@@ -198,17 +198,17 @@ const SPA = function() {
 
             moduleContainer = container;
             moduleModel = model;
-            window.addEventListener('hashchange', this.updateState)
-            window.addEventListener('pageLoaded', (e) => {
+            window.addEventListener('hashchange', this.updateState) // при изменении урла происходит апдэйт(из урла берем айдишник страницы и передаем в метод модели)
+            window.addEventListener('pageLoaded', (e) => { // при загрузке страницы происходит либо ничего, либо
                 if (e.detail.page == "categories") this.initCategoryPage()
                 if (e.detail.page == "accounts") this.initAccountsPage()
             })
-            window.addEventListener('formsuccess', (e) => {
+            window.addEventListener('formsuccess', (e) => { // если модалка заполнена, то скрываем ее
                 for (let modal in modals) {
                     modals[modal].hide()
                 }
             })
-            components.loadingScreen.show()
+            components.loadingScreen.show() //включаем спинер
 
             this.updateState() //первая отрисовка, что б увидеть что-нибудь(лэндинг)
             this.initModals()
@@ -219,8 +219,8 @@ const SPA = function() {
             logoutBtn.addEventListener('click', this.signOut)
         }
         this.initCategoryPage = function() {
-            modals.addCategoryModal.init()
-            forms.addCategoryForm.init(user.uid)
+            modals.addCategoryModal.init() // что бы при нажатии добавить категорию вылазила модалка
+            forms.addCategoryForm.init(user.uid) // а в ней форма для создания категории расхода
         }
         this.initAccountsPage = function() {
             modals.addAccountModal.init()
@@ -241,7 +241,7 @@ const SPA = function() {
         }
         this.updateState = function() { //из урла берем айдишник страницы и передаем в метод модели
             const page = window.location.hash.substring(1)
-            moduleModel.updateState(page)
+            moduleModel.updateState(page) // согласно айдишнику отражается страница нужная
         }
         this.initModals = function() {
             modals.signInModal.init()
@@ -253,7 +253,7 @@ const SPA = function() {
         }
         this.signOut = function(e) {
             e.preventDefault();
-            moduleModel.signOut();
+            moduleModel.signOut(); // выйти из аккаунта. описано в модели
         }
     }
     return {
@@ -278,5 +278,5 @@ const SPA = function() {
     }
 }()
 document.addEventListener('DOMContentLoaded', function() {
-    SPA.init('root')
+    SPA.init('root') // инициализируется все приложение. 
 })
