@@ -179,18 +179,11 @@ const Categories = { // когда поменялся хэш и стал кат�
     renderCategories: function(accounts, data) {
         const categoryCards = document.querySelector(`#${this.id}-cards`); //где будут лежать категории
         if (!categoryCards) return;
-<<<<<<< HEAD
         let categoryCardsHTML = '';
         categoryCards.innerHTML = categoryCardsHTML; // опустошаем контейнер
         for (let cat in data) { // бежим циклом по категориям из б/д
             categoryCardsHTML += CategoryCard.render(accounts, cat, data[cat]) //создаем штмл со всеми карточками
 
-=======
-        let categoryCardsHTML = ''
-        categoryCards.innerHTML = categoryCardsHTML;
-        for (let cat in data) {
-            categoryCardsHTML += CategoryCard.render(accounts, cat, data[cat])
->>>>>>> 0e90be7 (asd)
         }
         categoryCards.innerHTML = categoryCardsHTML; // добавляем на страницу штмл
         for (let cat in data) {
