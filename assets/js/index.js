@@ -160,6 +160,7 @@ const SPA = function() {
         }
         this.signOut = function() {
             firebase.auth().signOut()
+            window.location.hash = 'landing'
         }
         //этот метод проверяет состояние юзера, залогинен ты или нет
         this.updateUserState = function(currentUser) {
